@@ -45,11 +45,14 @@ class PreviewVideoGenerator:
             clip_file = os.path.join(self.temp_dir, f"clip_{i:03d}.mp4")
             command = [
                 self.ffmpeg,
+                '-hwaccel vaapi',
+                '-hwaccel_output_format vaapi',
                 '-ss', str(start_time),
                 '-i', self.filename,
                 '-t', str(self.clip_length),
-                '-s', '640x360',
-                '-c:v', 'libx264',
+                '-max_muxing_queue_size 1024',
+                '-vf "scale_vaapi=w=640:h=360:-2"',
+                '-c:v', 'h264_vaapi',
                 '-crf', '18',
                 '-preset', 'slow',
                 '-loglevel', 'quiet'
